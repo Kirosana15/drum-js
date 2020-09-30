@@ -58,41 +58,24 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
-
-  function removePlaying(e) {
-    this.classList.remove('playing');
+  function removeTransition(e) {
+    if (e.propertyName !== 'transform') return;
+    e.target.classList.remove('playing');
   }
 
-  function processKey(e) {
-    const key = e.keyCode;
-    const sound = document.querySelector(`audio[data-key="${key}"`);
-    const button = document.querySelector(`.key[data-key="${key}"`);
-    if (!sound || !button) {
-      return;
-    }
-    sound.currentTime=0;
-    sound.play();
-    button.classList.add('playing');
+  function playSound(e) {
+    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`);
+    const key = document.querySelector(`div[data-key="${e.keyCode}"]`);
+    if (!audio) return;
+
+    key.classList.add('playing');
+    audio.currentTime = 0;
+    audio.play();
   }
 
-  function processClick(e) {
-    const key = this.getAttribute('data-key');
-    const sound = document.querySelector(`audio[data-key="${key}"`);
-    this.classList.add('playing');
-    if (!sound) {
-      return;
-    }
-    sound.currentTime=0;
-    sound.play();
-  }
-
-  const buttons = document.querySelectorAll('.key');
-  buttons.forEach(button => {
-    button.addEventListener('transitionend', removePlaying);
-    button.addEventListener('click', processClick);
-  });
-
-  window.addEventListener('keydown', processKey);
+  const keys = Array.from(document.querySelectorAll('.key'));
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition));
+  window.addEventListener('keydown', playSound);
 </script>
 
 
